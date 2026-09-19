@@ -18,7 +18,7 @@ export function Star({ size = 16, color = 'currentColor', className = '' }) {
 }
 
 /* ---------- texto que llena el ancho exacto ---------- */
-export function FitText({ text, outline = false, className = '' }) {
+export function FitText({ text, outline = false, className = '', stretch = true }) {
   const ref = useRef(null)
   const [box, setBox] = useState('0 0 1000 75')
 
@@ -57,8 +57,8 @@ export function FitText({ text, outline = false, className = '' }) {
         y="0"
         dominantBaseline="text-before-edge"
         fontSize="100"
-        textLength="1000"
-        lengthAdjust="spacingAndGlyphs"
+        textLength={stretch ? 1000 : undefined}
+        lengthAdjust={stretch ? 'spacingAndGlyphs' : undefined}
       >
         {text}
       </text>
@@ -148,10 +148,10 @@ export function Cover({ word, variante = 'blue', img, alt }) {
     <div className={'cover cover-' + variante} role="img" aria-label={'Portada: ' + alt}>
       <div className="cover-grid" />
       <div className="cover-word">
-        <FitText text={word} />
+        <FitText text={word} stretch={false} />
       </div>
       <div className="cover-word cover-word-ghost" aria-hidden="true">
-        <FitText text={word} outline />
+        <FitText text={word} outline stretch={false} />
       </div>
       <Star size={22} className="cover-star cover-star-a" />
       <Star size={14} className="cover-star cover-star-b" />
