@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 
 const WHATSAPP = '3122774143'
 const BEHANCE = 'https://www.behance.net/gallery/249616273/Portafolio-Urban-UXIlustracion'
@@ -14,17 +14,43 @@ function Star({ size = 16, color = 'currentColor' }) {
 }
 
 function FitText({ text, outline = false }) {
+  const ref = useRef(null)
+  const [box, setBox] = useState('0 0 1000 75')
+
+  useEffect(() => {
+    let alive = true
+    const measure = () => {
+      const el = ref.current
+      if (!el || !alive) return
+      try {
+        const b = el.getBBox()
+        if (b.width > 0 && b.height > 0) {
+          setBox(b.x + ' ' + b.y + ' ' + b.width + ' ' + b.height)
+        }
+      } catch (e) {
+        /* getBBox can throw if the node is not rendered yet */
+      }
+    }
+    measure()
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(measure)
+    return () => {
+      alive = false
+    }
+  }, [text])
+
   return (
     <svg
       className={outline ? 'fit fit-outline' : 'fit'}
-      viewBox="0 0 1000 80"
+      viewBox={box}
       preserveAspectRatio="xMidYMid meet"
       role="img"
       aria-label={text}
     >
       <text
+        ref={ref}
         x="0"
-        y="75"
+        y="0"
+        dominantBaseline="text-before-edge"
         fontSize="100"
         textLength="1000"
         lengthAdjust="spacingAndGlyphs"
